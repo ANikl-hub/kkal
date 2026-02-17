@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цель по калориям</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f3339">
+
+    <style>
+        /* ===== Основной стиль ===== */
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f3339;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .card {
+            max-width: 460px;
+            margin: auto;
+            background: #a4d1c7;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            background: #ddd;
+            border-radius: 25px;
+            margin-top: 15px;
+            height: 35px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4CAF50, #81C784);
+            height: 100%;
+            width: 0%;
+            border-radius: 25px 0 0 25px;
+            transition: width 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 0;
+            left: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+            pointer-events: none;
+        }
+
+        .stats {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #historyBlock {
+            margin-top: 12px;
+        }
+
+        #historyList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #historyList li {
+            padding: 6px 0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        .deleteBtn {
+            background: #dd556c;
+            border: none;
+            color: white;
+            padding: 4px 6px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 6px;
+            transition: 0.2s;
+        }
+
+        .deleteBtn:hover {
+            opacity: 0.8;
+        }
+
+        input[type="date"] {
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .miniBtn {
+            width: auto;
+            padding: 6px 10px;
+            font-size: 13px;
+            border-radius: 6px;
+            margin: 4px 4px 0 0;
+        }
+
+        .editGoalBtn {
+            background: #2196F3;
+        }
+
+        .editDateBtn {
+            background: #FF9800;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .achievements {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .ach {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .ach.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .doneBlock {
+            text-align: center;
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f0fff4;
+            border: 1px solid #d7f0dd;
+        }
+
+        .doneBlock h2 {
+            font-size: 18px;
+            margin: 0;
+            color: #2b2b2b;
+        }
+
+        .doneBlock p {
+            margin: 6px 0 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .doneBlock button {
+            width: auto;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .doneBlock button:first-of-type {
+            background: #4CAF50;
+        }
+
+        .doneBlock button:last-of-type {
+            background: #dd556c;
+        }
+
+        #editGoalPopup, #editDatePopup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🔥 Моя цель: </h1>
+
+    <div id="goalBlock">
+        <input type="number" id="goalInput" placeholder="Введите цель (ккал)">
+        <div class="label">Выберите дату дедлайна</div>
+        <input type="date" id="deadlineInput">
+        <button onclick="setGoal()">Поехали</button>
+    </div>
+
+    <div id="progressBlock" class="hidden">
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0 / 0</div>
+        </div>
+
+        <div class="stats">
+            <p>Осталось: <span id="leftText"></span> ккал</p>
+            <p>Осталось дней: <span id="daysLeftText"></span></p>
+            <p>Сжигай в день: <span id="dailyNeedText"></span></p>
+        </div>
+
+        <div class="achievements">
+            <div class="ach" id="ach25">25%</div>
+            <div class="ach" id="ach50">50%</div>
+            <div class="ach" id="ach75">75%</div>
+            <div class="ach" id="ach100">100%</div>
+        </div>
+
+        <div class="row">
+            <button class="miniBtn editGoalBtn" onclick="openEditGoal()">Редактировать цель</button>
+            <button class="miniBtn editDateBtn" onclick="openEditDate()">Редактировать дату</button>
+        </div>
+
+        <input type="date" id="dateInput">
+        <input type="number" id="addInput" placeholder="Ккал за сегодня">
+        <button onclick="addCalories()">Добавить</button>
+        <button onclick="resetGoal()" style="background:#dd556c;">Сбросить цель</button>
+
+        <button onclick="toggleHistory()" class="miniBtn" style="width: auto; margin-top: 10px;">
+            Показать историю
+        </button>
+
+        <div id="historyBlock" class="hidden">
+            <h3>История:</h3>
+            <ul id="historyList"></ul>
+        </div>
+
+        <div class="doneBlock hidden" id="doneBlock">
+            <h2>🎉 Поздравляю, цель выполнена!</h2>
+            <p>Продли цель или начни новую.</p>
+            <button onclick="extendGoal()">Продлить</button>
+            <button onclick="resetGoal()">Новая цель</button>
+        </div>
+    </div>
+</div>
+
+<!-- Попап редактирования цели -->
+<div id="editGoalPopup">
+    <div class="popup-content">
+        <h3>Новая цель (ккал)</h3>
+        <input type="number" id="newGoalInput" placeholder="Введите новую цель">
+        <button onclick="saveNewGoal()">Сохранить</button>
+        <button onclick="closeEditGoal()" style="background:#dd556c; margin-top: 10px;">Отмена</button>
+    </div>
+</div>
+
+<!-- Попап редактирования дедлайна -->
+<div id="editDatePopup">
+    <div class="popup-content">
+        <h3>Новый дедлайн</h3>
+        <input type="date" id="newDeadlineInput">
+        <button onclick="saveNewDeadline()">Сохранить</button>
+        <button onclick="closeEditDate()" style="background:#dd556c; margin-top: 10px;">Отмена</button>
+    </div>
+</div>
+
+<script>
+    // ===== Данные =====
+    let goal = Number(localStorage.getItem("goal") || 0);
+    let total = Number(localStorage.getItem("total") || 0);
+    let deadline = localStorage.getItem("deadline") || null;
+    let history = JSON.parse(localStorage.getItem("history") || "[]");
+
+    function getMoscowToday() {
+        const moscow = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Moscow" }));
+        const y = moscow.getFullYear(), m = String(moscow.getMonth()+1).padStart(2,'0'), d = String(moscow.getDate()).padStart(2,'0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function setTodayDate() { document.getElementById("dateInput").value = getMoscowToday(); }
+    function setTodayDeadline() { if(!deadline) document.getElementById("deadlineInput").value = getMoscowToday(); }
+
+    setTodayDate();
+    setTodayDeadline();
+
+    function formatNumber(num) { return num.toLocaleString("ru-RU"); }
+    function formatDateRU(dateStr) { const [y,m,d] = dateStr.split("-"); return `${d}.${m}.${y}`; }
+
+    function recalcTotal() { total = history.reduce((sum,i)=>sum+i.value,0); localStorage.setItem("total", total); }
+    function calcDaysLeft() { if(!deadline) return "—"; const diff = Math.ceil((new Date(deadline)-new Date(getMoscowToday()))/(1000*60*60*24)); return diff>=0?diff:0; }
+    function calcDailyNeed() { const days=calcDaysLeft(); if(!goal||!deadline||days<=0)return "—"; const need=Math.ceil((goal-total)/days); return need>0?need:0; }
+
+    function updateAchievements(p){["ach25","ach50","ach75","ach100"].forEach((id,i)=>document.getElementById(id).classList.toggle("active",p>=25*(i+1))); }
+    function showDoneBlock(show){document.getElementById("doneBlock").classList.toggle("hidden",!show);}
+
+    function setGoal() {
+        goal=Number(document.getElementById("goalInput").value);
+        deadline=document.getElementById("deadlineInput").value;
+        if(!goal||goal<=0||!deadline)return;
+        history=[]; recalcTotal();
+        localStorage.setItem("goal",goal); localStorage.setItem("deadline",deadline); localStorage.setItem("history",JSON.stringify(history)); localStorage.setItem("total",total);
+        showProgress();
+    }
+
+    function addCalories() {
+        const add=Number(document.getElementById("addInput").value); if(!add||add<=0)return;
+        const date=document.getElementById("dateInput").value;
+        history.push({id:Date.now(),date,value:add}); localStorage.setItem("history",JSON.stringify(history));
+        recalcTotal(); if(total>goal)total=goal; localStorage.setItem("total",total);
+        document.getElementById("addInput").value=""; updateUI(); setTodayDate();
+    }
+
+    function showProgress(){document.getElementById("goalBlock").classList.add("hidden"); document.getElementById("progressBlock").classList.remove("hidden"); updateUI();}
+
+    function updateUI() {
+        const percent=Math.round((total/goal)*100), percentSafe=Math.min(100,percent), left=Math.max(0,goal-total);
+        document.getElementById("progressText").innerText=`${formatNumber(total)} / ${formatNumber(goal)}`;
+        document.getElementById("leftText").innerText=formatNumber(left);
+        document.getElementById("daysLeftText").innerText=calcDaysLeft();
+        const daily=calcDailyNeed(); document.getElementById("dailyNeedText").innerText=daily==="—"?"—":formatNumber(daily)+" ккал";
+        document.getElementById("progressBar").style.width=percentSafe+"%";
+        updateAchievements(percentSafe); renderHistory(); showDoneBlock(percentSafe>=100);
+    }
+
+    function renderHistory() {
+        const list=document.getElementById("historyList"); list.innerHTML="";
+        history.sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(item=>{
+            const li=document.createElement("li");
+            li.innerHTML=`<span>${formatDateRU(item.date)} — ${formatNumber(item.value)} ккал</span>
+            <button class="deleteBtn" onclick="deleteEntry(${item.id})">Удалить</button>`;
+            list.appendChild(li);
+        });
+    }
+
+    function deleteEntry(id){history=history.filter(i=>i.id!==id); localStorage.setItem("history",JSON.stringify(history)); recalcTotal(); updateUI();}
+    function toggleHistory(){const block=document.getElementById("historyBlock"); block.classList.toggle("hidden"); event.target.innerText=block.classList.contains("hidden")?"Показать историю":"Скрыть историю";}
+    function openEditGoal(){document.getElementById("newGoalInput").value=goal; document.getElementById("editGoalPopup").style.display="flex";}
+    function closeEditGoal(){document.getElementById("editGoalPopup").style.display="none";}
+    function saveNewGoal(){const newGoal=Number(document.getElementById("newGoalInput").value); if(!newGoal||newGoal<=0)return; goal=newGoal; localStorage.setItem("goal",goal); updateUI(); closeEditGoal();}
+    function openEditDate(){document.getElementById("newDeadlineInput").value=deadline; document.getElementById("editDatePopup").style.display="flex";}
+    function closeEditDate(){document.getElementById("editDatePopup").style.display="none";}
+    function saveNewDeadline(){const newDeadline=document.getElementById("newDeadlineInput").value; if(!newDeadline)return; deadline=newDeadline; localStorage.setItem("deadline",deadline); updateUI(); closeEditDate();}
+    function extendGoal(){const newGoal=Number(prompt("Введите новую цель (ккал), больше текущей:",goal)); if(!newGoal||newGoal<=goal)return; goal=newGoal; localStorage.setItem("goal",goal); updateUI();}
+    function resetGoal(){if(!confirm("Ты уверен, что хочешь сбросить цель?"))return; localStorage.clear(); location.reload();}
+
+    if(goal){recalcTotal(); showProgress();}
+
+    // ===== PWA регистрация =====
+    if('serviceWorker' in navigator){
+        window.addEventListener('load',()=>{navigator.serviceWorker.register('service-worker.js').then(()=>console.log("SW зарегистрирован"));});
+    }
+
+</script>
+</body>
+</html>
