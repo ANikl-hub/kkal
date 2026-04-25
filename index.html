@@ -2,426 +2,905 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Цель по калориям</title>
-
-    <!-- PWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0B0C0E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Calorie Goal">
+    
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f3339">
-
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <title>Calorie — цель по калориям</title>
     <style>
-        /* ===== Основной стиль ===== */
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f3339;
-            padding: 10px;
+        * {
             margin: 0;
-        }
-
-        .card {
-            max-width: 460px;
-            margin: auto;
-            background: #a4d1c7;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 22px;
-        }
-
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        .progress-container {
-            background: #ddd;
-            border-radius: 25px;
-            margin-top: 15px;
-            height: 35px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #4CAF50, #81C784);
-            height: 100%;
-            width: 0%;
-            border-radius: 25px 0 0 25px;
-            transition: width 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .progress-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            top: 0;
-            left: 0;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            color: #333;
-            pointer-events: none;
-        }
-
-        .stats {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #historyBlock {
-            margin-top: 12px;
-        }
-
-        #historyList {
-            list-style: none;
             padding: 0;
-            margin: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        #historyList li {
-            padding: 6px 0;
-            border-bottom: 1px solid #ddd;
+        
+        body {
+            background: #0B0C0E;
+            font-family: -apple-system, 'Inter', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            letter-spacing: -0.01em;
+        }
+        
+        .app {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: #121316;
+            border-radius: 28px;
+            padding: 24px 20px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        
+        .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 500;
+            color: #8E8E92;
+            margin-bottom: 6px;
+        }
+        
+        .value-large {
+            font-size: 2.4rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        
+        .value-medium {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+        
+        .value-small {
+            font-size: 0.85rem;
+            color: #A0A0A8;
+        }
+        
+        .goal-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        
+        .goal-title {
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: #FFFFFF;
+            letter-spacing: -0.3px;
+        }
+        
+        .goal-badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: rgba(255,255,255,0.04);
+            padding: 6px 12px;
+            border-radius: 100px;
+            color: #CFCFD4;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 0.5px solid rgba(255,255,255,0.1);
+        }
+        
+        .goal-badge:active {
+            background: rgba(255,255,255,0.12);
+            transform: scale(0.96);
+        }
+        
+        .metrics-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            justify-content: space-between;
+        }
+        
+        .metric {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .progress-container {
+            margin: 24px 0 20px;
+        }
+        
+        .progress-track {
+            background: #26272D;
+            border-radius: 100px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #D4AF37;
+            width: 0%;
+            height: 100%;
+            border-radius: 100px;
+            transition: width 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            font-weight: 450;
+            color: #9A9AA0;
+        }
+        
+        .form-area {
+            margin: 28px 0 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .field {
+            width: 100%;
+        }
+        
+        .field label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8E8E94;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            background: #1A1B1F;
+            border: 1px solid #2A2B30;
+            border-radius: 18px;
+            padding: 14px 16px;
+            font-size: 1rem;
+            color: #FFFFFF;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.15s, background 0.15s;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 0.5;
+            background: #2A2B30;
+        }
+        
+        input:focus, select:focus {
+            border-color: #D4AF37;
+            background: #1F2025;
+        }
+        
+        .btn {
+            background: #D4AF37;
+            border: none;
+            border-radius: 28px;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0B0C0E;
+            cursor: pointer;
+            transition: all 0.1s;
+            font-family: inherit;
+            margin-top: 8px;
+            width: 100%;
+        }
+        
+        .btn:active {
+            background: #E5C252;
+            transform: scale(0.97);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #2F3037;
+            color: #D0D0D6;
+        }
+        
+        .btn-secondary:active {
+            background: rgba(255,255,255,0.03);
+            transform: scale(0.97);
+        }
+        
+        .btn-danger {
+            background: #C96A53;
+        }
+        
+        .btn-danger:active {
+            background: #B35D4A;
+        }
+        
+        .history-section {
+            margin-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 20px;
+        }
+        
+        .history-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .history-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .history-toggle, .clear-history-btn {
+            background: none;
+            border: 0.5px solid #2D2E35;
+            color: #B0B0B8;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.1s;
+        }
+        
+        .history-toggle:active, .clear-history-btn:active {
+            background: rgba(255,255,255,0.05);
+            transform: scale(0.96);
+        }
+        
+        .history-list {
+            max-height: 360px;
+            overflow-y: auto;
+            transition: all 0.2s;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .history-list.hidden {
+            display: none;
+        }
+        
+        .transaction-item {
+            background: #0F1013;
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 0.5px solid rgba(255,255,255,0.04);
+        }
+        
+        .transaction-left {
+            flex: 1;
+            padding-right: 12px;
+        }
+        
+        .transaction-category {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+            color: #D4AF37;
+        }
+        
+        .transaction-note {
+            font-size: 0.85rem;
+            color: #CACAD2;
+            font-weight: 450;
+            margin: 4px 0;
             word-break: break-word;
         }
-
-        .deleteBtn {
-            background: #dd556c;
+        
+        .transaction-date {
+            font-size: 0.65rem;
+            color: #6F6F78;
+        }
+        
+        .transaction-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: #D4AF37;
+        }
+        
+        .delete-transaction {
+            background: none;
             border: none;
-            color: white;
-            padding: 4px 6px;
+            color: #5A5A64;
+            font-size: 1.3rem;
             cursor: pointer;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 6px;
-            transition: 0.2s;
+            padding: 8px 8px;
+            border-radius: 40px;
+            transition: 0.1s;
+            margin-left: 8px;
+            min-width: 44px;
         }
-
-        .deleteBtn:hover {
-            opacity: 0.8;
+        
+        .delete-transaction:active {
+            color: #D4AF37;
+            background: rgba(212,175,55,0.1);
+            transform: scale(0.94);
         }
-
-        input[type="date"] {
-            padding: 8px;
-            font-size: 14px;
+        
+        .empty-history {
+            text-align: center;
+            padding: 32px 20px;
+            color: #5E5E68;
+            font-size: 0.85rem;
+            border: 1px dashed rgba(255,255,255,0.05);
+            border-radius: 24px;
         }
-
-        .miniBtn {
-            width: auto;
-            padding: 6px 10px;
-            font-size: 13px;
-            border-radius: 6px;
-            margin: 4px 4px 0 0;
-        }
-
-        .editGoalBtn {
-            background: #2196F3;
-        }
-
-        .editDateBtn {
-            background: #FF9800;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .label {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #333;
-        }
-
+        
         .achievements {
             display: flex;
+            gap: 8px;
+            margin: 20px 0;
             justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-top: 10px;
         }
-
+        
         .ach {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            border: 1px solid #ddd;
-            color: #666;
-        }
-
-        .ach.active {
-            background: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-
-        .doneBlock {
+            flex: 1;
             text-align: center;
+            padding: 8px 4px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #1A1B1F;
+            color: #5E5E68;
+            transition: all 0.2s;
+        }
+        
+        .ach.active {
+            background: #D4AF37;
+            color: #0B0C0E;
+        }
+        
+        .done-block {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 24px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        
+        .done-block h2 {
+            color: #D4AF37;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        
+        .done-block p {
+            color: #8E8E92;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+        
+        .row-buttons {
+            display: flex;
+            gap: 10px;
             margin-top: 12px;
-            padding: 12px;
+        }
+        
+        footer {
+            font-size: 0.65rem;
+            color: #484850;
+            text-align: center;
+            margin-top: 24px;
+            padding-bottom: 8px;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #18191E;
             border-radius: 10px;
-            background: #f0fff4;
-            border: 1px solid #d7f0dd;
         }
-
-        .doneBlock h2 {
-            font-size: 18px;
-            margin: 0;
-            color: #2b2b2b;
+        
+        ::-webkit-scrollbar-thumb {
+            background: #3A3B42;
+            border-radius: 10px;
         }
-
-        .doneBlock p {
-            margin: 6px 0 0 0;
-            font-size: 14px;
-            color: #666;
+        
+        input, button {
+            font-size: 16px;
         }
-
-        .doneBlock button {
-            width: auto;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 8px;
-            margin-top: 8px;
+        
+        button {
+            cursor: pointer;
+            touch-action: manipulation;
         }
-
-        .doneBlock button:first-of-type {
-            background: #4CAF50;
-        }
-
-        .doneBlock button:last-of-type {
-            background: #dd556c;
-        }
-
-        #editGoalPopup, #editDatePopup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
+        
+        .hidden {
             display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            box-sizing: border-box;
         }
-
-        .popup-content {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 350px;
-        }
-
     </style>
 </head>
 <body>
-
-<div class="card">
-    <h1>🔥 Моя цель: </h1>
-
-    <div id="goalBlock">
-        <input type="number" id="goalInput" placeholder="Введите цель (ккал)">
-        <div class="label">Выберите дату дедлайна</div>
-        <input type="date" id="deadlineInput">
-        <button onclick="setGoal()">Поехали</button>
-    </div>
-
-    <div id="progressBlock" class="hidden">
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="progress-text" id="progressText">0 / 0</div>
+<div class="app">
+    <div class="card">
+        <!-- Блок установки цели (начальный) -->
+        <div id="goalSetupBlock">
+            <div class="goal-row">
+                <div class="goal-title">Цель по калориям</div>
+            </div>
+            <div class="form-area">
+                <div class="form-row">
+                    <div class="field">
+                        <label>Целевое количество калорий</label>
+                        <input type="number" id="goalInput" placeholder="например, 50000" inputmode="decimal">
+                    </div>
+                    <div class="field">
+                        <label>Дедлайн</label>
+                        <input type="date" id="deadlineInput">
+                    </div>
+                    <button id="setGoalBtn" class="btn">Начать</button>
+                </div>
+            </div>
         </div>
-
-        <div class="stats">
-            <p>Осталось: <span id="leftText"></span> ккал</p>
-            <p>Осталось дней: <span id="daysLeftText"></span></p>
-            <p>Сжигай в день: <span id="dailyNeedText"></span></p>
+        
+        <!-- Основной блок с прогрессом -->
+        <div id="progressBlock" class="hidden">
+            <div class="goal-row">
+                <div class="goal-title" id="goalTitle">0 ккал</div>
+                <div class="goal-badge" id="editGoalBtn">редактировать</div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="label">Сожжено</div>
+                    <div class="value-large" id="totalDisplay">0 ₽</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Цель</div>
+                    <div class="value-medium" id="goalDisplay">0 ккал</div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-stats">
+                    <span id="percentSpan">0%</span>
+                    <span>Осталось <span id="remainderSpan">0 ккал</span></span>
+                </div>
+            </div>
+            
+            <div class="stats" style="margin: 16px 0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                <div class="value-small">⏰ Дней осталось: <strong id="daysLeftText">—</strong></div>
+                <div class="value-small">⚡ В день нужно: <strong id="dailyNeedText">—</strong></div>
+            </div>
+            
+            <div class="achievements" id="achievements">
+                <div class="ach" data-percent="25">25%</div>
+                <div class="ach" data-percent="50">50%</div>
+                <div class="ach" data-percent="75">75%</div>
+                <div class="ach" data-percent="100">100%</div>
+            </div>
+            
+            <div class="form-area">
+                <div class="form-row">
+                    <div class="field">
+                        <label>Дата</label>
+                        <input type="date" id="dateInput">
+                    </div>
+                    <div class="field">
+                        <label>Калории</label>
+                        <input type="number" id="caloriesInput" placeholder="0" inputmode="decimal">
+                    </div>
+                    <button id="addCaloriesBtn" class="btn">Добавить</button>
+                </div>
+            </div>
+            
+            <div class="row-buttons">
+                <button id="resetGoalBtn" class="btn btn-secondary" style="flex:1;">Сбросить цель</button>
+            </div>
+            
+            <div class="history-section">
+                <div class="history-header">
+                    <span class="label">ЖУРНАЛ</span>
+                    <div class="history-actions">
+                        <button id="toggleHistoryBtn" class="history-toggle">⌄ Скрыть</button>
+                    </div>
+                </div>
+                <div id="historyList" class="history-list">
+                    <div class="empty-history">Нет записей</div>
+                </div>
+            </div>
+            
+            <div id="doneBlock" class="done-block hidden">
+                <h2>🎉 Цель достигнута!</h2>
+                <p>Вы сожгли нужное количество калорий</p>
+                <div class="row-buttons">
+                    <button id="extendGoalBtn" class="btn btn-secondary" style="flex:1;">Продлить цель</button>
+                    <button id="newGoalBtn" class="btn btn-secondary" style="flex:1;">Новая цель</button>
+                </div>
+            </div>
         </div>
-
-        <div class="achievements">
-            <div class="ach" id="ach25">25%</div>
-            <div class="ach" id="ach50">50%</div>
-            <div class="ach" id="ach75">75%</div>
-            <div class="ach" id="ach100">100%</div>
-        </div>
-
-        <div class="row">
-            <button class="miniBtn editGoalBtn" onclick="openEditGoal()">Редактировать цель</button>
-            <button class="miniBtn editDateBtn" onclick="openEditDate()">Редактировать дату</button>
-        </div>
-
-        <input type="date" id="dateInput">
-        <input type="number" id="addInput" placeholder="Ккал за сегодня">
-        <button onclick="addCalories()">Добавить</button>
-        <button onclick="resetGoal()" style="background:#dd556c;">Сбросить цель</button>
-
-        <button onclick="toggleHistory()" class="miniBtn" style="width: auto; margin-top: 10px;">
-            Показать историю
-        </button>
-
-        <div id="historyBlock" class="hidden">
-            <h3>История:</h3>
-            <ul id="historyList"></ul>
-        </div>
-
-        <div class="doneBlock hidden" id="doneBlock">
-            <h2>🎉 Поздравляю, цель выполнена!</h2>
-            <p>Продли цель или начни новую.</p>
-            <button onclick="extendGoal()">Продлить</button>
-            <button onclick="resetGoal()">Новая цель</button>
-        </div>
-    </div>
-</div>
-
-<!-- Попап редактирования цели -->
-<div id="editGoalPopup">
-    <div class="popup-content">
-        <h3>Новая цель (ккал)</h3>
-        <input type="number" id="newGoalInput" placeholder="Введите новую цель">
-        <button onclick="saveNewGoal()">Сохранить</button>
-        <button onclick="closeEditGoal()" style="background:#dd556c; margin-top: 10px;">Отмена</button>
-    </div>
-</div>
-
-<!-- Попап редактирования дедлайна -->
-<div id="editDatePopup">
-    <div class="popup-content">
-        <h3>Новый дедлайн</h3>
-        <input type="date" id="newDeadlineInput">
-        <button onclick="saveNewDeadline()">Сохранить</button>
-        <button onclick="closeEditDate()" style="background:#dd556c; margin-top: 10px;">Отмена</button>
+        
+        <footer>LocalStorage • данные сохраняются на вашем устройстве</footer>
     </div>
 </div>
 
 <script>
-    // ===== Данные =====
-    let goal = Number(localStorage.getItem("goal") || 0);
-    let total = Number(localStorage.getItem("total") || 0);
-    let deadline = localStorage.getItem("deadline") || null;
-    let history = JSON.parse(localStorage.getItem("history") || "[]");
-
+    // ----- Состояние -----
+    let goal = 0;
+    let total = 0;
+    let deadline = null;
+    let entries = [];
+    
+    // DOM элементы
+    const goalSetupBlock = document.getElementById('goalSetupBlock');
+    const progressBlock = document.getElementById('progressBlock');
+    const goalInput = document.getElementById('goalInput');
+    const deadlineInput = document.getElementById('deadlineInput');
+    const setGoalBtn = document.getElementById('setGoalBtn');
+    const goalTitle = document.getElementById('goalTitle');
+    const goalDisplay = document.getElementById('goalDisplay');
+    const totalDisplay = document.getElementById('totalDisplay');
+    const progressFill = document.getElementById('progressFill');
+    const percentSpan = document.getElementById('percentSpan');
+    const remainderSpan = document.getElementById('remainderSpan');
+    const daysLeftText = document.getElementById('daysLeftText');
+    const dailyNeedText = document.getElementById('dailyNeedText');
+    const dateInput = document.getElementById('dateInput');
+    const caloriesInput = document.getElementById('caloriesInput');
+    const addCaloriesBtn = document.getElementById('addCaloriesBtn');
+    const resetGoalBtn = document.getElementById('resetGoalBtn');
+    const editGoalBtn = document.getElementById('editGoalBtn');
+    const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
+    const historyList = document.getElementById('historyList');
+    const doneBlock = document.getElementById('doneBlock');
+    const extendGoalBtn = document.getElementById('extendGoalBtn');
+    const newGoalBtn = document.getElementById('newGoalBtn');
+    
+    let historyHidden = false;
+    
+    // ----- Вспомогательные функции -----
     function getMoscowToday() {
         const moscow = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Moscow" }));
-        const y = moscow.getFullYear(), m = String(moscow.getMonth()+1).padStart(2,'0'), d = String(moscow.getDate()).padStart(2,'0');
+        const y = moscow.getFullYear();
+        const m = String(moscow.getMonth() + 1).padStart(2, '0');
+        const d = String(moscow.getDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
     }
-
-    function setTodayDate() { document.getElementById("dateInput").value = getMoscowToday(); }
-    function setTodayDeadline() { if(!deadline) document.getElementById("deadlineInput").value = getMoscowToday(); }
-
-    setTodayDate();
-    setTodayDeadline();
-
-    function formatNumber(num) { return num.toLocaleString("ru-RU"); }
-    function formatDateRU(dateStr) { const [y,m,d] = dateStr.split("-"); return `${d}.${m}.${y}`; }
-
-    function recalcTotal() { total = history.reduce((sum,i)=>sum+i.value,0); localStorage.setItem("total", total); }
-    function calcDaysLeft() { if(!deadline) return "—"; const diff = Math.ceil((new Date(deadline)-new Date(getMoscowToday()))/(1000*60*60*24)); return diff>=0?diff:0; }
-    function calcDailyNeed() { const days=calcDaysLeft(); if(!goal||!deadline||days<=0)return "—"; const need=Math.ceil((goal-total)/days); return need>0?need:0; }
-
-    function updateAchievements(p){["ach25","ach50","ach75","ach100"].forEach((id,i)=>document.getElementById(id).classList.toggle("active",p>=25*(i+1))); }
-    function showDoneBlock(show){document.getElementById("doneBlock").classList.toggle("hidden",!show);}
-
-    function setGoal() {
-        goal=Number(document.getElementById("goalInput").value);
-        deadline=document.getElementById("deadlineInput").value;
-        if(!goal||goal<=0||!deadline)return;
-        history=[]; recalcTotal();
-        localStorage.setItem("goal",goal); localStorage.setItem("deadline",deadline); localStorage.setItem("history",JSON.stringify(history)); localStorage.setItem("total",total);
-        showProgress();
+    
+    function formatNumber(num) {
+        return Math.floor(num).toLocaleString('ru-RU');
     }
-
-    function addCalories() {
-        const add=Number(document.getElementById("addInput").value); if(!add||add<=0)return;
-        const date=document.getElementById("dateInput").value;
-        history.push({id:Date.now(),date,value:add}); localStorage.setItem("history",JSON.stringify(history));
-        recalcTotal(); if(total>goal)total=goal; localStorage.setItem("total",total);
-        document.getElementById("addInput").value=""; updateUI(); setTodayDate();
+    
+    function formatDateRU(dateStr) {
+        if (!dateStr) return '';
+        const [y, m, d] = dateStr.split("-");
+        return `${d}.${m}.${y}`;
     }
-
-    function showProgress(){document.getElementById("goalBlock").classList.add("hidden"); document.getElementById("progressBlock").classList.remove("hidden"); updateUI();}
-
-    function updateUI() {
-        const percent=Math.round((total/goal)*100), percentSafe=Math.min(100,percent), left=Math.max(0,goal-total);
-        document.getElementById("progressText").innerText=`${formatNumber(total)} / ${formatNumber(goal)}`;
-        document.getElementById("leftText").innerText=formatNumber(left);
-        document.getElementById("daysLeftText").innerText=calcDaysLeft();
-        const daily=calcDailyNeed(); document.getElementById("dailyNeedText").innerText=daily==="—"?"—":formatNumber(daily)+" ккал";
-        document.getElementById("progressBar").style.width=percentSafe+"%";
-        updateAchievements(percentSafe); renderHistory(); showDoneBlock(percentSafe>=100);
+    
+    function recalcTotal() {
+        total = entries.reduce((sum, e) => sum + e.calories, 0);
+        if (total > goal) total = goal;
     }
-
-    function renderHistory() {
-        const list=document.getElementById("historyList"); list.innerHTML="";
-        history.sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(item=>{
-            const li=document.createElement("li");
-            li.innerHTML=`<span>${formatDateRU(item.date)} — ${formatNumber(item.value)} ккал</span>
-            <button class="deleteBtn" onclick="deleteEntry(${item.id})">Удалить</button>`;
-            list.appendChild(li);
+    
+    function calcDaysLeft() {
+        if (!deadline) return "—";
+        const diff = Math.ceil((new Date(deadline) - new Date(getMoscowToday())) / (1000 * 60 * 60 * 24));
+        return diff >= 0 ? diff : 0;
+    }
+    
+    function calcDailyNeed() {
+        const days = calcDaysLeft();
+        if (!goal || !deadline || days <= 0 || total >= goal) return "—";
+        const need = Math.ceil((goal - total) / days);
+        return need > 0 ? formatNumber(need) + " ккал" : "—";
+    }
+    
+    function updateAchievements(percent) {
+        const achievements = document.querySelectorAll('.ach');
+        achievements.forEach(ach => {
+            const p = parseInt(ach.dataset.percent);
+            if (percent >= p) {
+                ach.classList.add('active');
+            } else {
+                ach.classList.remove('active');
+            }
         });
     }
-
-    function deleteEntry(id){history=history.filter(i=>i.id!==id); localStorage.setItem("history",JSON.stringify(history)); recalcTotal(); updateUI();}
-    function toggleHistory(){const block=document.getElementById("historyBlock"); block.classList.toggle("hidden"); event.target.innerText=block.classList.contains("hidden")?"Показать историю":"Скрыть историю";}
-    function openEditGoal(){document.getElementById("newGoalInput").value=goal; document.getElementById("editGoalPopup").style.display="flex";}
-    function closeEditGoal(){document.getElementById("editGoalPopup").style.display="none";}
-    function saveNewGoal(){const newGoal=Number(document.getElementById("newGoalInput").value); if(!newGoal||newGoal<=0)return; goal=newGoal; localStorage.setItem("goal",goal); updateUI(); closeEditGoal();}
-    function openEditDate(){document.getElementById("newDeadlineInput").value=deadline; document.getElementById("editDatePopup").style.display="flex";}
-    function closeEditDate(){document.getElementById("editDatePopup").style.display="none";}
-    function saveNewDeadline(){const newDeadline=document.getElementById("newDeadlineInput").value; if(!newDeadline)return; deadline=newDeadline; localStorage.setItem("deadline",deadline); updateUI(); closeEditDate();}
-    function extendGoal(){const newGoal=Number(prompt("Введите новую цель (ккал), больше текущей:",goal)); if(!newGoal||newGoal<=goal)return; goal=newGoal; localStorage.setItem("goal",goal); updateUI();}
-    function resetGoal(){if(!confirm("Ты уверен, что хочешь сбросить цель?"))return; localStorage.clear(); location.reload();}
-
-    if(goal){recalcTotal(); showProgress();}
-
-    // ===== PWA регистрация =====
-    if('serviceWorker' in navigator){
-        window.addEventListener('load',()=>{navigator.serviceWorker.register('service-worker.js').then(()=>console.log("SW зарегистрирован"));});
+    
+    function renderHistory() {
+        if (!entries.length) {
+            historyList.innerHTML = '<div class="empty-history">Журнал пуст. Добавьте операцию</div>';
+            return;
+        }
+        
+        let html = '';
+        [...entries].reverse().forEach(entry => {
+            html += `
+                <div class="transaction-item">
+                    <div class="transaction-left">
+                        <div class="transaction-category">СОЖЖЕНО</div>
+                        <div class="transaction-date">${formatDateRU(entry.date)}</div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div class="transaction-amount">+ ${formatNumber(entry.calories)} ккал</div>
+                        <button class="delete-transaction" data-id="${entry.id}">✕</button>
+                    </div>
+                </div>
+            `;
+        });
+        historyList.innerHTML = html;
+        
+        document.querySelectorAll('.delete-transaction').forEach(btn => {
+            const id = parseInt(btn.dataset.id);
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteEntry(id);
+            });
+        });
     }
-
+    
+    function deleteEntry(id) {
+        entries = entries.filter(e => e.id !== id);
+        recalcTotal();
+        saveToLocal();
+        updateUI();
+    }
+    
+    function updateUI() {
+        if (!goal) return;
+        
+        goalTitle.innerText = formatNumber(goal) + " ккал";
+        goalDisplay.innerText = formatNumber(goal) + " ккал";
+        totalDisplay.innerText = formatNumber(total) + " ккал";
+        
+        const percent = (total / goal) * 100;
+        const percentClamped = Math.min(100, Math.max(0, percent));
+        progressFill.style.width = `${percentClamped}%`;
+        percentSpan.innerText = `${Math.floor(percentClamped)}%`;
+        const remainder = Math.max(0, goal - total);
+        remainderSpan.innerText = formatNumber(remainder) + " ккал";
+        
+        daysLeftText.innerText = calcDaysLeft();
+        dailyNeedText.innerText = calcDailyNeed();
+        
+        updateAchievements(percentClamped);
+        renderHistory();
+        
+        const isCompleted = total >= goal;
+        doneBlock.classList.toggle('hidden', !isCompleted);
+        
+        if (historyHidden) {
+            historyList.classList.add('hidden');
+            toggleHistoryBtn.innerText = '⌃ Показать';
+        } else {
+            historyList.classList.remove('hidden');
+            toggleHistoryBtn.innerText = '⌄ Скрыть';
+        }
+    }
+    
+    function saveToLocal() {
+        const data = {
+            goal, total, deadline, entries
+        };
+        localStorage.setItem('calorie_goal_app', JSON.stringify(data));
+    }
+    
+    function loadFromStorage() {
+        const raw = localStorage.getItem('calorie_goal_app');
+        if (raw) {
+            try {
+                const data = JSON.parse(raw);
+                goal = data.goal || 0;
+                total = data.total || 0;
+                deadline = data.deadline || null;
+                entries = Array.isArray(data.entries) ? data.entries : [];
+                recalcTotal();
+            } catch(e) {
+                resetToDefault();
+            }
+        } else {
+            resetToDefault();
+        }
+        
+        if (goal && goal > 0) {
+            showProgressMode();
+        } else {
+            showSetupMode();
+        }
+        
+        updateUI();
+    }
+    
+    function resetToDefault() {
+        goal = 0;
+        total = 0;
+        deadline = null;
+        entries = [];
+    }
+    
+    function showSetupMode() {
+        goalSetupBlock.classList.remove('hidden');
+        progressBlock.classList.add('hidden');
+    }
+    
+    function showProgressMode() {
+        goalSetupBlock.classList.add('hidden');
+        progressBlock.classList.remove('hidden');
+        setTodayDate();
+        updateUI();
+    }
+    
+    function setTodayDate() {
+        dateInput.value = getMoscowToday();
+    }
+    
+    function setGoal() {
+        const newGoal = parseFloat(goalInput.value);
+        const newDeadline = deadlineInput.value;
+        
+        if (isNaN(newGoal) || newGoal <= 0) {
+            alert("Введите корректное количество калорий");
+            return;
+        }
+        if (!newDeadline) {
+            alert("Выберите дату дедлайна");
+            return;
+        }
+        
+        goal = newGoal;
+        deadline = newDeadline;
+        entries = [];
+        total = 0;
+        
+        saveToLocal();
+        showProgressMode();
+    }
+    
+    function addCalories() {
+        const calories = parseFloat(caloriesInput.value);
+        const date = dateInput.value;
+        
+        if (isNaN(calories) || calories <= 0) {
+            alert("Введите количество калорий больше нуля");
+            return;
+        }
+        if (!date) {
+            alert("Выберите дату");
+            return;
+        }
+        
+        const newEntry = {
+            id: Date.now(),
+            date: date,
+            calories: calories
+        };
+        
+        entries.push(newEntry);
+        recalcTotal();
+        saveToLocal();
+        updateUI();
+        
+        caloriesInput.value = '';
+        setTodayDate();
+        caloriesInput.focus();
+    }
+    
+    function resetGoal() {
+        if (confirm("Сбросить цель? Вся история будет удалена.")) {
+            localStorage.removeItem('calorie_goal_app');
+            resetToDefault();
+            showSetupMode();
+            goalInput.value = '';
+            deadlineInput.value = '';
+        }
+    }
+    
+    function editGoal() {
+        const newGoal = prompt("Введите новую цель (ккал):", goal);
+        if (newGoal !== null) {
+            const num = parseFloat(newGoal);
+            if (!isNaN(num) && num > 0) {
+                goal = num;
+                recalcTotal();
+                saveToLocal();
+                updateUI();
+            } else {
+                alert("Введите корректное число");
+            }
+        }
+    }
+    
+    function extendGoal() {
+        const currentGoal = goal;
+        const newGoal = prompt("Новая цель (ккал) — должна быть больше текущей:", currentGoal);
+        if (newGoal !== null) {
+            const num = parseFloat(newGoal);
+            if (!isNaN(num) && num > currentGoal) {
+                goal = num;
+                saveToLocal();
+                updateUI();
+                doneBlock.classList.add('hidden');
+            } else {
+                alert("Новая цель должна быть больше текущей");
+            }
+        }
+    }
+    
+    function toggleHistory() {
+        historyHidden = !historyHidden;
+        if (historyHidden) {
+            historyList.classList.add('hidden');
+            toggleHistoryBtn.innerText = '⌃ Показать';
+        } else {
+            historyList.classList.remove('hidden');
+            toggleHistoryBtn.innerText = '⌄ Скрыть';
+        }
+    }
+    
+    function handleKeyboardSubmit(e) {
+        if (e.key === 'Enter' && e.target === caloriesInput) {
+            e.preventDefault();
+            addCalories();
+        }
+    }
+    
+    // ----- Привязка событий -----
+    setGoalBtn.addEventListener('click', setGoal);
+    addCaloriesBtn.addEventListener('click', addCalories);
+    resetGoalBtn.addEventListener('click', resetGoal);
+    editGoalBtn.addEventListener('click', editGoal);
+    toggleHistoryBtn.addEventListener('click', toggleHistory);
+    extendGoalBtn.addEventListener('click', extendGoal);
+    newGoalBtn.addEventListener('click', resetGoal);
+    caloriesInput.addEventListener('keypress', handleKeyboardSubmit);
+    
+    // Установка сегодняшней даты для дедлайна
+    if (deadlineInput) {
+        deadlineInput.value = getMoscowToday();
+    }
+    
+    // ----- Загрузка и PWA -----
+    loadFromStorage();
+    
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/calorie-pwa/sw.js')
+            .then(reg => console.log('✅ SW registered:', reg))
+            .catch(err => console.log('❌ SW error:', err));
+    }
 </script>
 </body>
 </html>
