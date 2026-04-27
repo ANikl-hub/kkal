@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Calorie Goal">
     
-    <link rel="manifest" href="/calorie-pwa/manifest.json">
-    <link rel="apple-touch-icon" href="/calorie-pwa/icon-192.png">
+    <link rel="manifest" href="/kkal/manifest.json">
+    <link rel="apple-touch-icon" href="/kkal/icon-192.png">
     
     <title>Calorie — цель по калориям</title>
     <style>
@@ -445,6 +445,7 @@
 <body>
 <div class="app">
     <div class="card">
+        <!-- Блок установки цели (начальный) -->
         <div id="goalSetupBlock">
             <div class="form-area" style="margin-top: 0;">
                 <div class="form-row">
@@ -461,7 +462,9 @@
             </div>
         </div>
         
+        <!-- Основной блок с прогрессом -->
         <div id="progressBlock" class="hidden">
+            <!-- Метрики: сожжено и цель -->
             <div class="metrics-grid">
                 <div class="metric">
                     <div class="label">Сожжено</div>
@@ -473,6 +476,7 @@
                 </div>
             </div>
             
+            <!-- Прогресс-бар с кнопкой редактирования -->
             <div class="progress-container">
                 <div class="progress-track">
                     <div class="progress-fill" id="progressFill"></div>
@@ -486,11 +490,13 @@
                 </div>
             </div>
             
+            <!-- Дополнительная статистика -->
             <div class="stats">
                 <div class="value-small">⏰ Дней осталось: <strong id="daysLeftText">—</strong></div>
                 <div class="value-small">⚡ В день нужно: <strong id="dailyNeedText">—</strong></div>
             </div>
             
+            <!-- Достижения (проценты) -->
             <div class="achievements" id="achievements">
                 <div class="ach" data-percent="25">25%</div>
                 <div class="ach" data-percent="50">50%</div>
@@ -498,6 +504,7 @@
                 <div class="ach" data-percent="100">100%</div>
             </div>
             
+            <!-- Форма добавления калорий -->
             <div class="form-area">
                 <div class="form-row">
                     <div class="field">
@@ -512,10 +519,12 @@
                 </div>
             </div>
             
+            <!-- Кнопка сброса цели -->
             <div class="row-buttons">
                 <button id="resetGoalBtn" class="btn btn-secondary" style="flex:1;">Сбросить цель</button>
             </div>
             
+            <!-- История -->
             <div class="history-section">
                 <div class="history-header">
                     <span class="label">ЖУРНАЛ</span>
@@ -528,6 +537,7 @@
                 </div>
             </div>
             
+            <!-- Блок "Цель достигнута" -->
             <div id="doneBlock" class="done-block hidden">
                 <h2>🎉 Цель достигнута!</h2>
                 <p>Вы сожгли нужное количество калорий</p>
@@ -543,11 +553,13 @@
 </div>
 
 <script>
+    // ----- Состояние -----
     let goal = 0;
     let total = 0;
     let deadline = null;
     let entries = [];
     
+    // DOM элементы
     const goalSetupBlock = document.getElementById('goalSetupBlock');
     const progressBlock = document.getElementById('progressBlock');
     const goalInput = document.getElementById('goalInput');
@@ -573,6 +585,7 @@
     
     let historyHidden = false;
     
+    // ----- Вспомогательные функции -----
     function getMoscowToday() {
         const moscow = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Moscow" }));
         const y = moscow.getFullYear();
@@ -692,7 +705,9 @@
     }
     
     function saveToLocal() {
-        const data = { goal, total, deadline, entries };
+        const data = {
+            goal, total, deadline, entries
+        };
         localStorage.setItem('calorie_goal_app', JSON.stringify(data));
     }
     
@@ -856,6 +871,7 @@
         }
     }
     
+    // ----- Привязка событий -----
     setGoalBtn.addEventListener('click', setGoal);
     addCaloriesBtn.addEventListener('click', addCalories);
     resetGoalBtn.addEventListener('click', resetGoal);
@@ -865,14 +881,17 @@
     newGoalBtn.addEventListener('click', resetGoal);
     caloriesInput.addEventListener('keypress', handleKeyboardSubmit);
     
+    // Установка сегодняшней даты для дедлайна по умолчанию
     if (deadlineInput) {
         deadlineInput.value = getMoscowToday();
     }
     
+    // ----- Загрузка -----
     loadFromStorage();
     
+    // ----- Регистрация Service Worker (PWA) -----
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/calorie-pwa/sw.js')
+        navigator.serviceWorker.register('/kkal/sw.js')
             .then(reg => console.log('SW registered:', reg))
             .catch(err => console.log('SW error:', err));
     }
