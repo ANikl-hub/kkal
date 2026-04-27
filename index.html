@@ -73,41 +73,6 @@
             color: #A0A0A8;
         }
         
-        .goal-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 28px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        
-        .goal-title {
-            font-size: 1.35rem;
-            font-weight: 500;
-            color: #FFFFFF;
-            letter-spacing: -0.3px;
-        }
-        
-        .goal-badge {
-            font-size: 0.7rem;
-            font-weight: 500;
-            background: rgba(255,255,255,0.04);
-            padding: 6px 12px;
-            border-radius: 100px;
-            color: #CFCFD4;
-            cursor: pointer;
-            transition: all 0.15s;
-            border: 0.5px solid rgba(255,255,255,0.1);
-        }
-        
-        .goal-badge:active {
-            background: rgba(255,255,255,0.12);
-            transform: scale(0.96);
-        }
-        
         .metrics-grid {
             display: flex;
             gap: 20px;
@@ -148,6 +113,24 @@
             font-size: 0.8rem;
             font-weight: 450;
             color: #9A9AA0;
+        }
+        
+        .edit-goal-btn {
+            background: none;
+            border: 0.5px solid #2D2E35;
+            color: #B0B0B8;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.1s;
+        }
+        
+        .edit-goal-btn:active {
+            background: rgba(255,255,255,0.05);
+            transform: scale(0.96);
         }
         
         .form-area {
@@ -388,6 +371,14 @@
             color: #0B0C0E;
         }
         
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+        
         .done-block {
             text-align: center;
             margin-top: 20px;
@@ -456,10 +447,7 @@
     <div class="card">
         <!-- Блок установки цели (начальный) -->
         <div id="goalSetupBlock">
-            <div class="goal-row">
-                <div class="goal-title">Цель по калориям</div>
-            </div>
-            <div class="form-area">
+            <div class="form-area" style="margin-top: 0;">
                 <div class="form-row">
                     <div class="field">
                         <label>Целевое количество калорий</label>
@@ -476,15 +464,11 @@
         
         <!-- Основной блок с прогрессом -->
         <div id="progressBlock" class="hidden">
-            <div class="goal-row">
-                <div class="goal-title" id="goalTitle">0 ккал</div>
-                <div class="goal-badge" id="editGoalBtn">редактировать</div>
-            </div>
-            
+            <!-- Метрики: сожжено и цель -->
             <div class="metrics-grid">
                 <div class="metric">
                     <div class="label">Сожжено</div>
-                    <div class="value-large" id="totalDisplay">0 ₽</div>
+                    <div class="value-large" id="totalDisplay">0 ккал</div>
                 </div>
                 <div class="metric">
                     <div class="label">Цель</div>
@@ -492,21 +476,27 @@
                 </div>
             </div>
             
+            <!-- Прогресс-бар с кнопкой редактирования -->
             <div class="progress-container">
                 <div class="progress-track">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <div class="progress-stats">
                     <span id="percentSpan">0%</span>
-                    <span>Осталось <span id="remainderSpan">0 ккал</span></span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Осталось <span id="remainderSpan">0 ккал</span></span>
+                        <button id="editGoalBtn" class="edit-goal-btn">редактировать</button>
+                    </div>
                 </div>
             </div>
             
-            <div class="stats" style="margin: 16px 0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <!-- Дополнительная статистика -->
+            <div class="stats">
                 <div class="value-small">⏰ Дней осталось: <strong id="daysLeftText">—</strong></div>
                 <div class="value-small">⚡ В день нужно: <strong id="dailyNeedText">—</strong></div>
             </div>
             
+            <!-- Достижения (проценты) -->
             <div class="achievements" id="achievements">
                 <div class="ach" data-percent="25">25%</div>
                 <div class="ach" data-percent="50">50%</div>
@@ -514,6 +504,7 @@
                 <div class="ach" data-percent="100">100%</div>
             </div>
             
+            <!-- Форма добавления калорий -->
             <div class="form-area">
                 <div class="form-row">
                     <div class="field">
@@ -528,10 +519,12 @@
                 </div>
             </div>
             
+            <!-- Кнопка сброса цели -->
             <div class="row-buttons">
                 <button id="resetGoalBtn" class="btn btn-secondary" style="flex:1;">Сбросить цель</button>
             </div>
             
+            <!-- История -->
             <div class="history-section">
                 <div class="history-header">
                     <span class="label">ЖУРНАЛ</span>
@@ -544,6 +537,7 @@
                 </div>
             </div>
             
+            <!-- Блок "Цель достигнута" -->
             <div id="doneBlock" class="done-block hidden">
                 <h2>🎉 Цель достигнута!</h2>
                 <p>Вы сожгли нужное количество калорий</p>
@@ -571,7 +565,6 @@
     const goalInput = document.getElementById('goalInput');
     const deadlineInput = document.getElementById('deadlineInput');
     const setGoalBtn = document.getElementById('setGoalBtn');
-    const goalTitle = document.getElementById('goalTitle');
     const goalDisplay = document.getElementById('goalDisplay');
     const totalDisplay = document.getElementById('totalDisplay');
     const progressFill = document.getElementById('progressFill');
@@ -683,7 +676,6 @@
     function updateUI() {
         if (!goal) return;
         
-        goalTitle.innerText = formatNumber(goal) + " ккал";
         goalDisplay.innerText = formatNumber(goal) + " ккал";
         totalDisplay.innerText = formatNumber(total) + " ккал";
         
@@ -826,6 +818,7 @@
             showSetupMode();
             goalInput.value = '';
             deadlineInput.value = '';
+            deadlineInput.value = getMoscowToday();
         }
     }
     
@@ -888,18 +881,18 @@
     newGoalBtn.addEventListener('click', resetGoal);
     caloriesInput.addEventListener('keypress', handleKeyboardSubmit);
     
-    // Установка сегодняшней даты для дедлайна
+    // Установка сегодняшней даты для дедлайна по умолчанию
     if (deadlineInput) {
         deadlineInput.value = getMoscowToday();
     }
     
-    // ----- Загрузка и PWA -----
+    // ----- Загрузка -----
     loadFromStorage();
     
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/calorie-pwa/sw.js')
-            .then(reg => console.log('✅ SW registered:', reg))
-            .catch(err => console.log('❌ SW error:', err));
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.log('SW error:', err));
     }
 </script>
 </body>
