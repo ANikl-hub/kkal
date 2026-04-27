@@ -1,20 +1,20 @@
 {
   "name": "Calorie Goal",
   "short_name": "Calories",
-  "start_url": "/calorie-pwa/",
-  "scope": "/calorie-pwa/",
+  "start_url": "/kkal/",
+  "scope": "/kkal/",
   "display": "standalone",
   "background_color": "#0B0C0E",
   "theme_color": "#0B0C0E",
   "description": "Цель по калориям",
   "icons": [
     {
-      "src": "/calorie-pwa/icon-192.png",
+      "src": "/kkal/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/calorie-pwa/icon-512.png",
+      "src": "/kkal/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
