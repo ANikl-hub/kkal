@@ -77,13 +77,38 @@
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
             justify-content: space-between;
         }
         
         .metric {
             flex: 1;
             min-width: 100px;
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .edit-goal-btn {
+            background: none;
+            border: 0.5px solid #2D2E35;
+            color: #B0B0B8;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.1s;
+        }
+        
+        .edit-goal-btn:active {
+            background: rgba(255,255,255,0.05);
+            transform: scale(0.96);
         }
         
         .progress-container {
@@ -113,24 +138,6 @@
             font-size: 0.8rem;
             font-weight: 450;
             color: #9A9AA0;
-        }
-        
-        .edit-goal-btn {
-            background: none;
-            border: 0.5px solid #2D2E35;
-            color: #B0B0B8;
-            font-size: 0.7rem;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-family: inherit;
-            transition: 0.1s;
-        }
-        
-        .edit-goal-btn:active {
-            background: rgba(255,255,255,0.05);
-            transform: scale(0.96);
         }
         
         .form-area {
@@ -471,22 +478,22 @@
                     <div class="value-large" id="totalDisplay">0 ккал</div>
                 </div>
                 <div class="metric">
-                    <div class="label">Цель</div>
+                    <div class="metric-header">
+                        <div class="label">Цель</div>
+                        <button id="editGoalBtn" class="edit-goal-btn">редактировать</button>
+                    </div>
                     <div class="value-medium" id="goalDisplay">0 ккал</div>
                 </div>
             </div>
             
-            <!-- Прогресс-бар с кнопкой редактирования -->
+            <!-- Прогресс-бар -->
             <div class="progress-container">
                 <div class="progress-track">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <div class="progress-stats">
                     <span id="percentSpan">0%</span>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span>Осталось <span id="remainderSpan">0 ккал</span></span>
-                        <button id="editGoalBtn" class="edit-goal-btn">редактировать</button>
-                    </div>
+                    <span>Осталось <span id="remainderSpan">0 ккал</span></span>
                 </div>
             </div>
             
