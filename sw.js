@@ -1,10 +1,10 @@
 const CACHE_NAME = 'calorie-goal-v1';
 const urlsToCache = [
-  '/calorie-pwa/',
-  '/calorie-pwa/index.html',
-  '/calorie-pwa/manifest.json',
-  '/calorie-pwa/icon-192.png',
-  '/calorie-pwa/icon-512.png'
+  '/kkal/',
+  '/kkal/index.html',
+  '/kkal/manifest.json',
+  '/kkal/icon-192.png',
+  '/kkal/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
