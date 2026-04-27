@@ -77,38 +77,13 @@
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
             justify-content: space-between;
         }
         
         .metric {
             flex: 1;
             min-width: 100px;
-        }
-        
-        .metric-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-        
-        .edit-goal-btn {
-            background: none;
-            border: 0.5px solid #2D2E35;
-            color: #B0B0B8;
-            font-size: 0.65rem;
-            font-weight: 500;
-            padding: 3px 8px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-family: inherit;
-            transition: 0.1s;
-        }
-        
-        .edit-goal-btn:active {
-            background: rgba(255,255,255,0.05);
-            transform: scale(0.96);
         }
         
         .progress-container {
@@ -231,6 +206,50 @@
         
         .btn-danger:active {
             background: #B35D4A;
+        }
+        
+        /* Скрываемый блок настроек цели */
+        .settings-toggle {
+            display: flex;
+            justify-content: center;
+            margin: 8px 0 4px;
+        }
+        
+        .settings-toggle-btn {
+            background: none;
+            border: 0.5px solid #2D2E35;
+            color: #8E8E92;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.1s;
+        }
+        
+        .settings-toggle-btn:active {
+            background: rgba(255,255,255,0.05);
+            transform: scale(0.96);
+        }
+        
+        .settings-panel {
+            overflow: hidden;
+            transition: all 0.2s ease;
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+        
+        .settings-panel.open {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+        
+        .settings-panel .row-buttons {
+            display: flex;
+            gap: 10px;
         }
         
         .history-section {
@@ -478,10 +497,7 @@
                     <div class="value-large" id="totalDisplay">0 ккал</div>
                 </div>
                 <div class="metric">
-                    <div class="metric-header">
-                        <div class="label">Цель</div>
-                        <button id="editGoalBtn" class="edit-goal-btn">редактировать</button>
-                    </div>
+                    <div class="label">Цель</div>
                     <div class="value-medium" id="goalDisplay">0 ккал</div>
                 </div>
             </div>
@@ -526,9 +542,15 @@
                 </div>
             </div>
             
-            <!-- Кнопка сброса цели -->
-            <div class="row-buttons">
-                <button id="resetGoalBtn" class="btn btn-secondary" style="flex:1;">Сбросить цель</button>
+            <!-- Скрываемый блок настроек цели -->
+            <div class="settings-toggle">
+                <button id="toggleSettingsBtn" class="settings-toggle-btn">⚙️ Настройки цели</button>
+            </div>
+            <div id="settingsPanel" class="settings-panel">
+                <div class="row-buttons">
+                    <button id="editGoalBtn" class="btn btn-secondary" style="flex:1;">Редактировать цель</button>
+                    <button id="resetGoalBtn" class="btn btn-secondary" style="flex:1;">Сбросить цель</button>
+                </div>
             </div>
             
             <!-- История -->
@@ -589,8 +611,11 @@
     const doneBlock = document.getElementById('doneBlock');
     const extendGoalBtn = document.getElementById('extendGoalBtn');
     const newGoalBtn = document.getElementById('newGoalBtn');
+    const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
     
     let historyHidden = false;
+    let settingsOpen = false;
     
     // ----- Вспомогательные функции -----
     function getMoscowToday() {
@@ -871,6 +896,17 @@
         }
     }
     
+    function toggleSettings() {
+        settingsOpen = !settingsOpen;
+        if (settingsOpen) {
+            settingsPanel.classList.add('open');
+            toggleSettingsBtn.textContent = '⚙️ Скрыть настройки';
+        } else {
+            settingsPanel.classList.remove('open');
+            toggleSettingsBtn.textContent = '⚙️ Настройки цели';
+        }
+    }
+    
     function handleKeyboardSubmit(e) {
         if (e.key === 'Enter' && e.target === caloriesInput) {
             e.preventDefault();
@@ -886,6 +922,7 @@
     toggleHistoryBtn.addEventListener('click', toggleHistory);
     extendGoalBtn.addEventListener('click', extendGoal);
     newGoalBtn.addEventListener('click', resetGoal);
+    toggleSettingsBtn.addEventListener('click', toggleSettings);
     caloriesInput.addEventListener('keypress', handleKeyboardSubmit);
     
     // Установка сегодняшней даты для дедлайна по умолчанию
